@@ -19,6 +19,10 @@ export const Player = sequelize.define('players', {
     },
     apodo: {
         type: DataTypes.STRING,
+    },
+    isActive: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true
     }
 }, {
     timestamps: true

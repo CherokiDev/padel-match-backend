@@ -44,3 +44,21 @@ export const createSchedule = async (req, res) => {
     console.log(error);
   }
 }
+
+export const deleteSchedule = async (req, res) => {
+  const { id } = res.body;
+  try {
+    const schedule = await Schedule.destroy({
+      where: {
+        id,
+      },
+    });
+    res.json({
+      message: 'Schedule deleted successfully',
+      count: schedule,
+    });
+  }
+  catch (error) {
+    console.log(error);
+  }
+};
