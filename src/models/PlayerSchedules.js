@@ -1,6 +1,6 @@
 import { DataTypes } from 'sequelize'
 import { sequelize } from '../config/db.js'
-import { Player } from './player.js'
+import { Player } from './Player.js'
 import { Schedule } from './Schedule.js'
 
 export const PlayerSchedules = sequelize.define('playerSchedules', {
