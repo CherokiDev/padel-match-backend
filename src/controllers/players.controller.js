@@ -48,6 +48,12 @@ export const getPlayersWithSchedules = async (req, res) => {
       include: {
         model: Schedule,
       },
+      where: {
+        isActive: true,
+      },
+      attributes: {
+        exclude: ['isActive', 'password'],
+      },
     });
     res.json({
       data: players,
@@ -161,6 +167,9 @@ export const assignSchedule = async (req, res) => {
     const player = await Player.findOne({
       where: {
         id,
+      },
+      attributes: {
+        exclude: ['isActive', 'password'],
       },
     });
 
