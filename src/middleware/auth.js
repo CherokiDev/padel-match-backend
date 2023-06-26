@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { jwtVerify, SignJWT } from "jose";
-import { Player } from "../models/player.js";
+import { Player } from "../models/Player.js";
 import bcrypt from "bcrypt";
 
 const authTokenRouter = Router();
