@@ -12,7 +12,7 @@ export const getPlayers = async (req, res) => {
         isActive: true,
       },
       attributes: {
-        exclude: ['isActive'],
+        exclude: ['isActive', 'password'],
       },
     });
     
