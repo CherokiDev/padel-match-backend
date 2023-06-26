@@ -1,4 +1,4 @@
-import { Player } from '../models/player.js';
+import { Player } from '../models/Player.js';
 import { Schedule } from '../models/Schedule.js';
 import { PlayerSchedules } from '../models/PlayerSchedules.js';
 import bcrypt from 'bcrypt';
