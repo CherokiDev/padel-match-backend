@@ -14,6 +14,10 @@ export const Player = sequelize.define('players', {
     name: {
         type: DataTypes.STRING,
     },
+    password: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
     phone: {
         type: DataTypes.STRING,
     },

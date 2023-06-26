@@ -1,6 +1,9 @@
 import { Player } from '../models/player.js';
 import { Schedule } from '../models/Schedule.js';
 import { PlayerSchedules } from '../models/PlayerSchedules.js';
+import bcrypt from 'bcrypt';
+
+const saltRounds = 10;
 
 export const getPlayers = async (req, res) => {
   try {
@@ -75,31 +78,80 @@ export const getPlayerById = async (req, res) => {
 
 export const createPlayer = async (req, res) => {
 
-  const { email, name, phone, apodo } = req.body;
-
-  try {
-    const newPlayer = await Player.create({
+  const { email, name, password, phone, apodo } = req.body;
+  const player = await Player.findOne({
+    where: {
       email,
-      name,
-      phone,
-      apodo,
-    });
-
-    if (newPlayer) {
-      return res.status(201).json({
-        message: 'Player created',
-        data: newPlayer,
-      });
-    }
-
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      message: 'Something goes wrong',
+    },
+  });
+  
+  if (player) {
+    return res.status(400).json({
+      message: 'Ya existe un jugador con ese email',
       data: {},
     });
+   
+  } else {
+    try {
+      const newPlayer = await Player.create({
+        email,
+        name,
+        password: await bcrypt.hash(password, saltRounds),
+        phone,
+        apodo,
+      });
+      if (newPlayer) {
+        return res.status(201).json({
+          message: 'Jugador creado correctamente',
+          data: newPlayer,
+        });
+      }
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({
+        message: 'Algo salió mal',
+        data: {},
+      });
+    }
   }
 }
+
+export const loginPlayer = async (email, password) => {
+
+  const player = await Player.findOne({
+    where: {
+      email,
+      password
+    },
+  });
+
+  if (player) {
+    return player;
+  }
+
+  
+  return null;
+  
+};
+
+
+// export const loginPlayer = async (email, password) => {
+  
+//   const player = Player.findOne({
+//     where: {
+//       email,
+//     },
+//   });
+
+//   if (!player) return null;
+
+//   if (player.password !== password) return null;
+
+//   return player;
+  
+// };
+
+
 
 export const assignSchedule = async (req, res) => {
   const { id } = req.params;
