@@ -1,7 +1,7 @@
 import app from './app.js';
 import { sequelize } from './config/db.js'
 
-import './models/player.js';
+import './models/Player.js';
 import './models/Schedule.js';
 import './models/PlayerSchedules.js';
 
