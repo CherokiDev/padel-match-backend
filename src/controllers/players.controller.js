@@ -239,6 +239,12 @@ export const deletePlayer = async (req, res) => {
       },
     });
 
+    if (player && player.isActive === false) {
+      return res.status(400).json({
+        message: 'Player already deleted',
+      });
+    }
+  
     if (player) {
       player.isActive = false;
       player.save();
@@ -249,10 +255,11 @@ export const deletePlayer = async (req, res) => {
       });
     }
 
-    return res.status(404).json({
-      message: 'Player not found',
-      data: {},
+    res.json({
+      message: 'Player deleted',
     });
+    
+
   } catch (error) {
     console.log(error);
   }
