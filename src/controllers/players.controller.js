@@ -5,6 +5,10 @@ import bcrypt from 'bcrypt';
 
 const saltRounds = 10;
 
+// @desc    Get all players
+// @route   GET /players
+// @access  Public
+
 export const getPlayers = async (req, res) => {
   try {
     const players = await Player.findAll({
@@ -42,6 +46,10 @@ export const getPlayers = async (req, res) => {
 //   }
 // };
 
+// @desc    Get all players with schedules
+// @route   GET /players/schedules
+// @access  Public
+
 export const getPlayersWithSchedules = async (req, res) => {
   try {
     const players = await Player.findAll({
@@ -63,6 +71,10 @@ export const getPlayersWithSchedules = async (req, res) => {
   }
 };
 
+// @desc    Get player by id
+// @route   GET /player/:id
+// @access  Public
+
 export const getPlayerById = async (req, res) => {
   const { id } = req.params;
   try {
@@ -81,6 +93,10 @@ export const getPlayerById = async (req, res) => {
     console.log(error);
   }
 };
+
+// @desc    Create a player
+// @route   POST /players
+// @access  Public
 
 export const createPlayer = async (req, res) => {
 
@@ -122,23 +138,13 @@ export const createPlayer = async (req, res) => {
   }
 }
 
-export const loginPlayer = async (email, password) => {
+// export const loginPlayer = async (req, res) => {
 
-  const player = await Player.findOne({
-    where: {
-      email,
-      password
-    },
-  });
-
-  if (player) {
-    return player;
-  }
-
+//   res.send({
+//     token: 'test123'
+//   });
   
-  return null;
-  
-};
+// };
 
 
 // export const loginPlayer = async (email, password) => {
@@ -157,7 +163,9 @@ export const loginPlayer = async (email, password) => {
   
 // };
 
-
+// @desc    Assign a schedule to a player
+// @route   POST /player/:id/schedules
+// @access  Public
 
 export const assignSchedule = async (req, res) => {
   const { id } = req.params;
@@ -227,6 +235,10 @@ export const assignSchedule = async (req, res) => {
     console.log(error);
   }
 }
+
+// @desc    Delete a player
+// @route   PUT /player/:id
+// @access  Public
 
 export const deletePlayer = async (req, res) => {
 
