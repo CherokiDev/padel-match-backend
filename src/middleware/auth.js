@@ -36,7 +36,7 @@ authTokenRouter.post("/login", async (req, res) => {
       .sign(encoder.encode(process.env.JWT_PRIVATE_KEY));
 
     console.log(jwt);
-    return res.send({ jwt });
+    return res.send({ jwt, email });
   } catch (err) {
     return res.sendStatus(401);
   }
@@ -62,7 +62,7 @@ authTokenRouter.get("/profile", async (req, res) => {
       },
     });
 
-    const {dataValues} = player;
+    const { dataValues } = player;
 
     if (!dataValues) return res.sendStatus(401);
 
