@@ -1,33 +1,37 @@
-import { DataTypes } from 'sequelize'
-import { sequelize } from '../config/db.js'
+import { DataTypes } from "sequelize";
+import { sequelize } from "../config/db.js";
 
-export const Player = sequelize.define('players', {
+export const Player = sequelize.define(
+  "players",
+  {
     id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
     },
     email: {
-        type: DataTypes.STRING,
-        unique: true
+      type: DataTypes.STRING,
+      unique: true,
     },
     name: {
-        type: DataTypes.STRING,
+      type: DataTypes.STRING,
     },
     password: {
-        type: DataTypes.STRING,
-        allowNull: false,
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     phone: {
-        type: DataTypes.STRING,
+      type: DataTypes.STRING,
     },
     apodo: {
-        type: DataTypes.STRING,
+      type: DataTypes.STRING,
     },
     isActive: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: true
-    }
-}, {
-    timestamps: true
-})
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
+    },
+  },
+  {
+    timestamps: true,
+  }
+);

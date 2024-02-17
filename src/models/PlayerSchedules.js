@@ -1,29 +1,20 @@
-import { DataTypes } from 'sequelize'
-import { sequelize } from '../config/db.js'
-import { Player } from './Player.js'
-import { Schedule } from './Schedule.js'
+import { DataTypes } from "sequelize";
+import { sequelize } from "../config/db.js";
 
-export const PlayerSchedules = sequelize.define('playerSchedules', {
+export const PlayerSchedules = sequelize.define(
+  "playerSchedules",
+  {
     id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
     },
     payer: {
-        type: DataTypes.BOOLEAN,
+      type: DataTypes.BOOLEAN,
     },
-}, {
-    timestamps: true
-})
-
-Player.belongsToMany(Schedule, {
-    through: PlayerSchedules,
-})
-
-Schedule.belongsToMany(Player, {
-    through: PlayerSchedules,
-})
-
-// await Player.sync()
-// await Schedule.sync()
-// await PlayerSchedules.sync()
+  },
+  {
+    tableName: "playerSchedules",
+    timestamps: false,
+  }
+);

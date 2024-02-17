@@ -1,7 +1,7 @@
-import { Player } from '../models/Player.js';
-import { Schedule } from '../models/Schedule.js';
-import { PlayerSchedules } from '../models/PlayerSchedules.js';
-import bcrypt from 'bcrypt';
+import { Player } from "../models/Player.js";
+import { Schedule } from "../models/Schedule.js";
+import { PlayerSchedules } from "../models/PlayerSchedules.js";
+import bcrypt from "bcrypt";
 
 const saltRounds = 10;
 
@@ -16,14 +16,13 @@ export const getPlayers = async (req, res) => {
         isActive: true,
       },
       attributes: {
-        exclude: ['isActive', 'password'],
+        exclude: ["isActive", "password"],
       },
     });
 
     res.json({
       data: players,
     });
-
   } catch (error) {
     console.log(error);
   }
@@ -60,7 +59,7 @@ export const getPlayersWithSchedules = async (req, res) => {
         isActive: true,
       },
       attributes: {
-        exclude: ['isActive', 'password'],
+        exclude: ["isActive", "password"],
       },
     });
     res.json({
@@ -100,7 +99,6 @@ export const getPlayerById = async (req, res) => {
 // @access  Public
 
 export const createPlayer = async (req, res) => {
-
   const { email, name, password, phone, apodo } = req.body;
   const player = await Player.findOne({
     where: {
@@ -110,10 +108,9 @@ export const createPlayer = async (req, res) => {
 
   if (player) {
     return res.status(400).json({
-      message: 'Ya existe un jugador con ese email',
+      message: "Ya existe un jugador con ese email",
       data: {},
     });
-
   } else {
     try {
       const newPlayer = await Player.create({
@@ -125,19 +122,19 @@ export const createPlayer = async (req, res) => {
       });
       if (newPlayer) {
         return res.status(201).json({
-          message: 'Jugador creado correctamente',
+          message: "Jugador creado correctamente",
           data: newPlayer,
         });
       }
     } catch (error) {
       console.log(error);
       res.status(500).json({
-        message: 'Algo salió mal',
+        message: "Algo salió mal",
         data: {},
       });
     }
   }
-}
+};
 
 // export const loginPlayer = async (req, res) => {
 
@@ -146,7 +143,6 @@ export const createPlayer = async (req, res) => {
 //   });
 
 // };
-
 
 // export const loginPlayer = async (email, password) => {
 
@@ -178,7 +174,7 @@ export const assignSchedule = async (req, res) => {
         id,
       },
       attributes: {
-        exclude: ['isActive', 'password'],
+        exclude: ["isActive", "password"],
       },
     });
 
@@ -197,7 +193,7 @@ export const assignSchedule = async (req, res) => {
 
     if (payerSchedule && payer) {
       return res.status(400).json({
-        message: 'There is already a payer for this schedule',
+        message: "There is already a payer for this schedule",
       });
     }
 
@@ -215,34 +211,32 @@ export const assignSchedule = async (req, res) => {
 
     if (playerSchedule) {
       return res.status(400).json({
-        message: 'Player already has this schedule',
+        message: "Player already has this schedule",
       });
     }
 
     if (player && schedule) {
       player.addSchedule(schedule, { through: { payer } });
       return res.status(201).json({
-        message: 'Schedule assigned to player',
+        message: "Schedule assigned to player",
         data: player,
       });
     }
 
     return res.status(404).json({
-      message: 'Player or schedule not found',
+      message: "Player or schedule not found",
       data: {},
     });
-
   } catch (error) {
     console.log(error);
   }
-}
+};
 
 // @desc    Delete a player
 // @route   PUT /player/:id
 // @access  Public
 
 export const deletePlayer = async (req, res) => {
-
   const { id } = req.params;
 
   try {
@@ -254,7 +248,7 @@ export const deletePlayer = async (req, res) => {
 
     if (player && player.isActive === false) {
       return res.status(400).json({
-        message: 'Player already deleted',
+        message: "Player already deleted",
       });
     }
 
@@ -269,11 +263,9 @@ export const deletePlayer = async (req, res) => {
     }
 
     res.json({
-      message: 'Player deleted',
+      message: "Player deleted",
     });
-
-
   } catch (error) {
     console.log(error);
   }
-}
+};

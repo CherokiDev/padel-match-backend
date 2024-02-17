@@ -73,8 +73,6 @@ authTokenRouter.get("/profile", async (req, res) => {
     dataValues.password = undefined;
 
     return res.send({ dataValues });
-
-
   } catch (err) {
     return res.sendStatus(401);
   }
