@@ -14,4 +14,6 @@ router.get('/profile', authTokenRouter)
 router.post('/player/:id/schedules', assignSchedule)
 router.put('/player/:id', deletePlayer)
 
+// prueba de ramas
+
 export default router;
