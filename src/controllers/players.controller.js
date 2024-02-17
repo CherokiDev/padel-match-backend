@@ -19,7 +19,7 @@ export const getPlayers = async (req, res) => {
         exclude: ['isActive', 'password'],
       },
     });
-    
+
     res.json({
       data: players,
     });
@@ -73,9 +73,10 @@ export const getPlayersWithSchedules = async (req, res) => {
 
 // @desc    Get player by id
 // @route   GET /player/:id
-// @access  Public
+// @access  Private
 
 export const getPlayerById = async (req, res) => {
+  console.log(req);
   const { id } = req.params;
   try {
     const player = await Player.findOne({
@@ -106,13 +107,13 @@ export const createPlayer = async (req, res) => {
       email,
     },
   });
-  
+
   if (player) {
     return res.status(400).json({
       message: 'Ya existe un jugador con ese email',
       data: {},
     });
-   
+
   } else {
     try {
       const newPlayer = await Player.create({
@@ -143,12 +144,12 @@ export const createPlayer = async (req, res) => {
 //   res.send({
 //     token: 'test123'
 //   });
-  
+
 // };
 
 
 // export const loginPlayer = async (email, password) => {
-  
+
 //   const player = Player.findOne({
 //     where: {
 //       email,
@@ -160,7 +161,7 @@ export const createPlayer = async (req, res) => {
 //   if (player.password !== password) return null;
 
 //   return player;
-  
+
 // };
 
 // @desc    Assign a schedule to a player
@@ -230,7 +231,7 @@ export const assignSchedule = async (req, res) => {
       message: 'Player or schedule not found',
       data: {},
     });
-  
+
   } catch (error) {
     console.log(error);
   }
@@ -256,7 +257,7 @@ export const deletePlayer = async (req, res) => {
         message: 'Player already deleted',
       });
     }
-  
+
     if (player) {
       player.isActive = false;
       player.save();
@@ -270,7 +271,7 @@ export const deletePlayer = async (req, res) => {
     res.json({
       message: 'Player deleted',
     });
-    
+
 
   } catch (error) {
     console.log(error);

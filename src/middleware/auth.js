@@ -2,6 +2,7 @@ import { Router } from "express";
 import { jwtVerify, SignJWT } from "jose";
 import { Player } from "../models/Player.js";
 import bcrypt from "bcrypt";
+import { Schedule } from "../models/Schedule.js";
 
 const authTokenRouter = Router();
 
@@ -32,11 +33,11 @@ authTokenRouter.post("/login", async (req, res) => {
     const jwt = await jwtConstructor
       .setProtectedHeader({ alg: "HS256", typ: "JWT" })
       .setIssuedAt()
-      .setExpirationTime("1h")
+      .setExpirationTime("7d")
       .sign(encoder.encode(process.env.JWT_PRIVATE_KEY));
 
     console.log(jwt);
-    return res.send({ jwt, email });
+    return res.send({ jwt, email, id });
   } catch (err) {
     return res.sendStatus(401);
   }
@@ -60,14 +61,14 @@ authTokenRouter.get("/profile", async (req, res) => {
       where: {
         id: id,
       },
+      include: {
+        model: Schedule,
+      },
     });
 
     const { dataValues } = player;
 
     if (!dataValues) return res.sendStatus(401);
-
-    // borrar dataValues.password;
-
 
     dataValues.password = undefined;
 
