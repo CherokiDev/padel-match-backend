@@ -57,14 +57,21 @@ authTokenRouter.get("/profile", async (req, res) => {
 
     const id = payload.id;
 
-    const player = await Player.findOne({
-      where: {
-        id: id,
-      },
-      include: {
-        model: Schedule,
-      },
-    });
+    let player;
+    try {
+      player = await Player.findOne({
+        where: {
+          id: id,
+        },
+        include: {
+          model: Schedule,
+          as: "schedules",
+        },
+      });
+    } catch (err) {
+      console.error("Error querying the database:", err);
+      return res.sendStatus(500); // Internal Server Error
+    }
 
     const { dataValues } = player;
 
