@@ -30,14 +30,13 @@ authTokenRouter.post("/login", async (req, res) => {
     const jwtConstructor = new SignJWT({ id });
 
     const encoder = new TextEncoder();
-    const jwt = await jwtConstructor
+    const token = await jwtConstructor
       .setProtectedHeader({ alg: "HS256", typ: "JWT" })
       .setIssuedAt()
       .setExpirationTime("7d")
       .sign(encoder.encode(process.env.JWT_PRIVATE_KEY));
 
-    console.log(jwt);
-    return res.send({ jwt, email, id });
+    return res.send({ token, email, id });
   } catch (err) {
     return res.sendStatus(401);
   }
@@ -81,6 +80,23 @@ authTokenRouter.get("/profile", async (req, res) => {
 
     return res.send({ dataValues });
   } catch (err) {
+    return res.sendStatus(401);
+  }
+});
+
+authTokenRouter.get("/verify-token", async (req, res) => {
+  const { authorization } = req.headers;
+
+  if (!authorization) return res.sendStatus(401);
+
+  try {
+    const encoder = new TextEncoder();
+    await jwtVerify(authorization, encoder.encode(process.env.JWT_PRIVATE_KEY));
+
+    // Si el token es válido, devolver un estado de éxito
+    return res.sendStatus(200);
+  } catch (err) {
+    // Si el token no es válido, devolver un estado de error
     return res.sendStatus(401);
   }
 });

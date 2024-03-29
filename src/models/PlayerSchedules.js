@@ -15,6 +15,6 @@ export const PlayerSchedules = sequelize.define(
   },
   {
     tableName: "playerSchedules",
-    timestamps: false,
+    timestamps: true,
   }
 );

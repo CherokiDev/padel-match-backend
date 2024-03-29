@@ -4,7 +4,7 @@ import { Schedule } from "./Schedule.js";
 
 Schedule.hasMany(PlayerSchedules, {
   foreignKey: "scheduleId",
-  as: "schedulePlayerSchedules", // changed alias to be unique
+  as: "schedulePlayerSchedules",
 });
 
 PlayerSchedules.belongsTo(Schedule, {
@@ -27,4 +27,22 @@ Schedule.belongsToMany(Player, {
   foreignKey: "scheduleId",
   otherKey: "playerId",
   as: "players",
+});
+
+Player.findAll({
+  include: [
+    {
+      model: Schedule,
+      as: "schedules", // Aquí se especifica el alias
+    },
+  ],
+});
+
+Schedule.findAll({
+  include: [
+    {
+      model: Player,
+      as: "players", // Aquí se especifica el alias
+    },
+  ],
 });

@@ -95,7 +95,7 @@ export const getPlayerById = async (req, res) => {
 };
 
 // @desc    Create a player
-// @route   POST /players
+// @route   POST /signup
 // @access  Public
 
 export const createPlayer = async (req, res) => {
@@ -203,6 +203,7 @@ export const assignSchedule = async (req, res) => {
       },
       include: {
         model: Schedule,
+        as: "schedules",
         where: {
           id: scheduleId,
         },
