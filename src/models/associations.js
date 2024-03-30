@@ -33,7 +33,7 @@ Player.findAll({
   include: [
     {
       model: Schedule,
-      as: "schedules", // Aquí se especifica el alias
+      as: "schedules",
     },
   ],
 });
@@ -42,7 +42,7 @@ Schedule.findAll({
   include: [
     {
       model: Player,
-      as: "players", // Aquí se especifica el alias
+      as: "players",
     },
   ],
 });
