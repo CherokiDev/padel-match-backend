@@ -105,7 +105,7 @@ export const updateSchedules = async () => {
   }
 };
 
-cron.schedule("23 18 * * *", updateSchedules);
+cron.schedule("0 0 * * *", updateSchedules);
 
 export const deleteSchedule = async (req, res) => {
   const { id } = res.body;
