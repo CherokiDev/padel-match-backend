@@ -59,7 +59,6 @@ export const createSchedule = async (req, res) => {
 
 export const updateSchedules = async () => {
   try {
-    // Eliminar los Schedule del día más antiguo
     await Schedule.destroy({
       where: {
         dateOfReservation: {
@@ -68,7 +67,6 @@ export const updateSchedules = async () => {
       },
     });
 
-    // Crear los nuevos Schedule para cada uno de los próximos 7 días
     const hours = [
       "10:00",
       "11:30",
@@ -79,26 +77,17 @@ export const updateSchedules = async () => {
       "19:00",
       "20:30",
     ];
-    for (let i = 0; i < 7; i++) {
-      let day = moment().add(i, "days").format("YYYY-MM-DD");
-      for (let j = 0; j < hours.length; j++) {
-        await Schedule.create({
-          dateOfReservation: `${day} ${hours[j]}`,
-          courtNumber: 1,
-        });
-        await Schedule.create({
-          dateOfReservation: `${day} ${hours[j]}`,
-          courtNumber: 2,
-        });
-        // await Schedule.destroy({
-        //   where: {
-        //     dateOfReservation: {
-        //       [Op.gte]: moment().startOf("day").toDate(),
-        //       [Op.lt]: moment().add(1, "day").startOf("day").toDate(),
-        //     },
-        //   },
-        // });
-      }
+
+    let day = moment().add(6, "days").format("YYYY-MM-DD");
+    for (let j = 0; j < hours.length; j++) {
+      await Schedule.create({
+        dateOfReservation: `${day} ${hours[j]}`,
+        courtNumber: 1,
+      });
+      await Schedule.create({
+        dateOfReservation: `${day} ${hours[j]}`,
+        courtNumber: 2,
+      });
     }
   } catch (error) {
     console.log(error);
