@@ -217,10 +217,25 @@ export const assignSchedule = async (req, res) => {
     }
 
     if (player && schedule) {
-      player.addSchedule(schedule, { through: { payer } });
+      await player.addSchedule(schedule, { through: { payer } });
+
+      // Fetch the updated player
+      const updatedPlayer = await Player.findOne({
+        where: {
+          id,
+        },
+        attributes: {
+          exclude: ["isActive", "password"],
+        },
+        include: {
+          model: Schedule,
+          as: "schedules",
+        },
+      });
+
       return res.status(201).json({
         message: "Schedule assigned to player",
-        data: player,
+        data: updatedPlayer,
       });
     }
 
