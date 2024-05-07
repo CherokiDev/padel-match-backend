@@ -1,10 +1,13 @@
 import "dotenv/config";
+import dotenv from "dotenv";
 import express from "express";
 import playerRoutes from "./routes/player.routes.js";
 import scheduleRoutes from "./routes/schedule.routes.js";
 import cors from "cors";
 import authTokenRouter from "./middleware/auth.js";
 import "./models/associations.js";
+
+dotenv.config();
 
 const app = express();
 

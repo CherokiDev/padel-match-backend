@@ -1,14 +1,14 @@
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 import { Player } from "../models/Player.js";
 import { Schedule } from "../models/Schedule.js";
 import { PlayerSchedules } from "../models/PlayerSchedules.js";
-import bcrypt from "bcrypt";
 
 const saltRounds = 10;
 
 // @desc    Get all players
 // @route   GET /players
 // @access  Public
-
 export const getPlayers = async (req, res) => {
   try {
     const players = await Player.findAll({
@@ -28,32 +28,15 @@ export const getPlayers = async (req, res) => {
   }
 };
 
-// export const getPlayers = async (req, res) => {
-//   // en el json, no mostrar el campo isActive
-//   try {
-//     const players = await Player.findAll({
-//       attributes: {
-//         exclude: ['isActive'],
-//       },
-//     });
-//     res.json({
-//       data: players,
-//     });
-//   }
-//   catch (error) {
-//     console.log(error);
-//   }
-// };
-
 // @desc    Get all players with schedules
 // @route   GET /players/schedules
 // @access  Public
-
 export const getPlayersWithSchedules = async (req, res) => {
   try {
     const players = await Player.findAll({
       include: {
         model: Schedule,
+        as: "schedules",
       },
       where: {
         isActive: true,
@@ -70,10 +53,9 @@ export const getPlayersWithSchedules = async (req, res) => {
   }
 };
 
-// @desc    Get player by id
+// @desc    Get player by Id
 // @route   GET /player/:id
-// @access  Private
-
+// @access  Public
 export const getPlayerById = async (req, res) => {
   console.log(req);
   const { id } = req.params;
@@ -84,6 +66,7 @@ export const getPlayerById = async (req, res) => {
       },
       include: {
         model: Schedule,
+        as: "schedules",
       },
     });
     res.json({
@@ -97,7 +80,6 @@ export const getPlayerById = async (req, res) => {
 // @desc    Create a player
 // @route   POST /signup
 // @access  Public
-
 export const createPlayer = async (req, res) => {
   const { email, name, password, phone, apodo } = req.body;
   const player = await Player.findOne({
@@ -108,7 +90,7 @@ export const createPlayer = async (req, res) => {
 
   if (player) {
     return res.status(400).json({
-      message: "Ya existe un jugador con ese email",
+      message: "Email no disponible",
       data: {},
     });
   } else {
@@ -136,34 +118,43 @@ export const createPlayer = async (req, res) => {
   }
 };
 
-// export const loginPlayer = async (req, res) => {
+// @desc    Login a player
+// @route   POST /login
+// @access  Public
+export const loginPlayer = async (req, res) => {
+  const { email, password } = req.body;
 
-//   res.send({
-//     token: 'test123'
-//   });
+  let player;
+  try {
+    player = await Player.findOne({
+      where: {
+        email: email,
+      },
+    });
+  } catch (err) {
+    console.error("Error querying the database:", err);
+    return res.sendStatus(500); // Internal Server Error
+  }
 
-// };
+  if (!player) {
+    return res.status(401).json({ message: "Invalid email or password" });
+  }
 
-// export const loginPlayer = async (email, password) => {
+  const validPassword = await bcrypt.compare(password, player.password);
+  if (!validPassword) {
+    return res.status(401).json({ message: "Invalid email or password" });
+  }
 
-//   const player = Player.findOne({
-//     where: {
-//       email,
-//     },
-//   });
+  const token = jwt.sign({ id: player.id }, process.env.JWT_PRIVATE_KEY, {
+    expiresIn: "1h",
+  });
 
-//   if (!player) return null;
-
-//   if (player.password !== password) return null;
-
-//   return player;
-
-// };
+  res.json({ id: player.id, email: player.email, token });
+};
 
 // @desc    Assign a schedule to a player
 // @route   POST /player/:id/schedules
-// @access  Public
-
+// @access  Private
 export const assignSchedule = async (req, res) => {
   const { id } = req.params;
   const { scheduleId, payer } = req.body;
@@ -219,7 +210,6 @@ export const assignSchedule = async (req, res) => {
     if (player && schedule) {
       await player.addSchedule(schedule, { through: { payer } });
 
-      // Fetch the updated player
       const updatedPlayer = await Player.findOne({
         where: {
           id,
@@ -251,7 +241,6 @@ export const assignSchedule = async (req, res) => {
 // @desc    Delete a player
 // @route   PUT /player/:id
 // @access  Public
-
 export const deletePlayer = async (req, res) => {
   const { id } = req.params;
 
@@ -284,4 +273,94 @@ export const deletePlayer = async (req, res) => {
   } catch (error) {
     console.log(error);
   }
+};
+
+// @desc    Get players in the same schedule
+// @route   GET /playersinsameschedule/:id
+// @access  Private
+export const getPlayersInSameSchedule = async (req, res) => {
+  try {
+    const playerId = req.params.id;
+    const userId = req.user.id; // get user id from the token
+
+    console.log("playerId", playerId);
+    console.log("userId", userId);
+    // check if the user is authorized to access this route
+    if (String(playerId) !== String(userId)) {
+      return res.status(403).json({
+        message: "You are not authorized to access this route",
+      });
+    }
+
+    const payerSchedules = await PlayerSchedules.findAll({
+      where: { playerId: playerId, payer: true },
+    });
+    const payerScheduleIds = payerSchedules.map((ps) => ps.scheduleId);
+    const playerSchedules = await PlayerSchedules.findAll({
+      where: { scheduleId: payerScheduleIds },
+    });
+    const playerIds = playerSchedules.map((ps) => ps.playerId);
+    let players = await Player.findAll({
+      where: { id: playerIds },
+      include: [
+        {
+          model: Schedule,
+          as: "schedules", // Alias for the association
+          required: false, // This is important
+        },
+      ],
+    });
+
+    // Filter schedules for each player
+    players = players.map((player) => {
+      const filteredSchedules = player.schedules.filter((schedule) =>
+        payerScheduleIds.includes(schedule.id)
+      );
+      return { ...player.toJSON(), schedules: filteredSchedules };
+    });
+
+    // Exclude the player that matches the playerId parameter
+    players = players.filter((player) => player.id.toString() !== playerId);
+
+    res.json({
+      message: "Players in the same schedule",
+      players: players,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Error getting players in the same schedule",
+    });
+  }
+};
+
+// @desc    Get player profile
+// @route   GET /players/profile
+// @access  Private
+export const getProfile = async (req, res) => {
+  const id = req.user.id;
+
+  let player;
+  try {
+    player = await Player.findOne({
+      where: {
+        id: id,
+      },
+      include: {
+        model: Schedule,
+        as: "schedules",
+      },
+    });
+  } catch (err) {
+    console.error("Error querying the database:", err);
+    return res.sendStatus(500); // Internal Server Error
+  }
+
+  if (!player) return res.sendStatus(404); // Not Found
+
+  const { dataValues } = player;
+
+  dataValues.password = undefined;
+
+  return res.send({ dataValues });
 };

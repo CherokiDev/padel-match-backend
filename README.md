@@ -24,6 +24,13 @@ npm install
 npm start
 ```
 
+## API
+
+### Players
+
+- POST /players/signup
+- POST /players/login
+
 ## Rutas
 
 ## Controladores

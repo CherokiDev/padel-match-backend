@@ -79,6 +79,8 @@ authTokenRouter.get("/profile", async (req, res) => {
 
     dataValues.password = undefined;
 
+    req.user = dataValues; // Add this line to add the user to the req object
+
     return res.send({ dataValues });
   } catch (err) {
     return res.sendStatus(401);
