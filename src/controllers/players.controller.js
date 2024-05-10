@@ -238,6 +238,65 @@ export const assignSchedule = async (req, res) => {
   }
 };
 
+// @desc    Remove a schedule from a player
+// @route   DELETE /player/:id/schedules
+// @access  Private
+export const removeSchedule = async (req, res) => {
+  const { id } = req.params;
+  const { scheduleId } = req.body;
+
+  try {
+    const player = await Player.findOne({
+      where: {
+        id,
+      },
+      attributes: {
+        exclude: ["isActive", "password"],
+      },
+    });
+
+    const schedule = await Schedule.findOne({
+      where: {
+        id: scheduleId,
+      },
+    });
+
+    if (!player || !schedule) {
+      return res.status(404).json({
+        message: "Player or schedule not found",
+        data: {},
+      });
+    }
+
+    const playerSchedule = await Player.findOne({
+      where: {
+        id,
+      },
+      include: {
+        model: Schedule,
+        as: "schedules",
+        where: {
+          id: scheduleId,
+        },
+      },
+    });
+
+    if (!playerSchedule) {
+      return res.status(400).json({
+        message: "Player does not have this schedule",
+      });
+    }
+
+    await player.removeSchedule(schedule);
+
+    return res.status(200).json({
+      message: "Schedule removed from player",
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 // @desc    Delete a player
 // @route   PUT /player/:id
 // @access  Public
@@ -259,7 +318,9 @@ export const deletePlayer = async (req, res) => {
 
     if (player) {
       player.isActive = false;
-      player.save();
+      const timestamp = Date.now();
+      player.email = "del_" + player.email + "_" + timestamp;
+      await player.save();
       await PlayerSchedules.destroy({
         where: {
           playerId: id,
