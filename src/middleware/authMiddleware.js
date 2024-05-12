@@ -31,7 +31,7 @@ export const authMiddleware = async (req, res, next) => {
       });
     } catch (err) {
       console.error("Error querying the database:", err);
-      return res.sendStatus(500); // Internal Server Error
+      return res.sendStatus(500);
     }
 
     const { dataValues } = player;

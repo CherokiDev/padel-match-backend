@@ -10,8 +10,8 @@ const router = Router();
 router.get("/schedulesAvailables", getSchedulesAvailables);
 router.get("/schedules", getSchedules);
 router.post("/schedules", createSchedule);
-router.put("/schedule/:id");
-router.delete("/schedule/:id");
-router.get("/schedule/:id");
+// router.put("/schedule/:id");
+// router.delete("/schedule/:id");
+// router.get("/schedule/:id");
 
 export default router;

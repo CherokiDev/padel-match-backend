@@ -1,8 +1,18 @@
 import { Sequelize, Op } from "sequelize";
 import cron from "node-cron";
 import moment from "moment/moment.js";
-import { PlayerSchedules } from "../models/PlayerSchedules.js";
 import { Schedule } from "../models/Schedule.js";
+
+const hours = [
+  "10:00",
+  "11:30",
+  "13:00",
+  "14:30",
+  "16:00",
+  "17:30",
+  "19:00",
+  "20:30",
+];
 
 export const getSchedules = async (req, res) => {
   try {
@@ -24,17 +34,6 @@ export const createSchedule = async (req, res) => {
     today = moment(today).add(1, "days").format("YYYY-MM-DD");
   }
 
-  const hours = [
-    "10:00",
-    "11:30",
-    "13:00",
-    "14:30",
-    "16:00",
-    "17:30",
-    "19:00",
-    "20:30",
-  ];
-
   try {
     for (let i = 0; i < 7; i++) {
       for (let j = 0; j < hours.length; j++) {
@@ -54,6 +53,7 @@ export const createSchedule = async (req, res) => {
     });
   } catch (error) {
     console.log(error);
+    res.status(500).json({ message: "Error creating schedule" });
   }
 };
 
@@ -66,17 +66,6 @@ export const updateSchedules = async () => {
         },
       },
     });
-
-    const hours = [
-      "10:00",
-      "11:30",
-      "13:00",
-      "14:30",
-      "16:00",
-      "17:30",
-      "19:00",
-      "20:30",
-    ];
 
     let day = moment().add(6, "days").format("YYYY-MM-DD");
     for (let j = 0; j < hours.length; j++) {
