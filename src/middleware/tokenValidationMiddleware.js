@@ -4,7 +4,7 @@ import { TextEncoder } from "util";
 import { Player } from "../models/Player.js";
 import { Schedule } from "../models/Schedule.js";
 
-export const authMiddleware = async (req, res, next) => {
+export const tokenValidationMiddleware = async (req, res, next) => {
   const { authorization } = req.headers;
 
   if (!authorization) return res.sendStatus(401);
@@ -40,9 +40,9 @@ export const authMiddleware = async (req, res, next) => {
 
     dataValues.password = undefined;
 
-    req.user = dataValues; // Add this line to add the user to the req object
+    req.user = dataValues;
 
-    next(); // Call next to move to the next middleware or route handler
+    next();
   } catch (err) {
     return res.sendStatus(401);
   }

@@ -30,6 +30,10 @@ export const Player = sequelize.define(
       type: DataTypes.BOOLEAN,
       defaultValue: true,
     },
+    role: {
+      type: DataTypes.STRING,
+      defaultValue: "user",
+    },
   },
   {
     timestamps: true,

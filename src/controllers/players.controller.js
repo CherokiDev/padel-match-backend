@@ -149,7 +149,7 @@ export const loginPlayer = async (req, res) => {
     expiresIn: "1h",
   });
 
-  res.json({ id: player.id, email: player.email, token });
+  res.json({ id: player.id, email: player.email, token, role: player.role });
 };
 
 // @desc    Assign a schedule to a player
@@ -342,11 +342,8 @@ export const deletePlayer = async (req, res) => {
 export const getPlayersInSameSchedule = async (req, res) => {
   try {
     const playerId = req.params.id;
-    const userId = req.user.id; // get user id from the token
+    const userId = req.user.id;
 
-    console.log("playerId", playerId);
-    console.log("userId", userId);
-    // check if the user is authorized to access this route
     if (String(playerId) !== String(userId)) {
       return res.status(403).json({
         message: "You are not authorized to access this route",
@@ -366,7 +363,7 @@ export const getPlayersInSameSchedule = async (req, res) => {
       include: [
         {
           model: Schedule,
-          as: "schedules", // Alias for the association
+          as: "schedules",
           required: false, // This is important
         },
       ],

@@ -11,25 +11,35 @@ import {
   getProfile,
   removeSchedule,
 } from "../controllers/players.controller.js";
-import { authMiddleware } from "../middleware/authMiddleware.js";
+import { tokenValidationMiddleware } from "../middleware/tokenValidationMiddleware.js";
+import { roleValidationMiddleware } from "../middleware/roleValidationMiddleware.js";
 
 const router = Router();
 
-router.get("/players", getPlayers);
-router.get("/players/profile", authMiddleware, getProfile);
+router.get(
+  "/players",
+  tokenValidationMiddleware,
+  roleValidationMiddleware(["admin"]),
+  getPlayers
+);
+router.get("/players/profile", tokenValidationMiddleware, getProfile);
 router.get("/players/schedules", getPlayersWithSchedules);
 router.get(
   "/players/same-schedule/:id",
-  authMiddleware,
+  tokenValidationMiddleware,
   getPlayersInSameSchedule
 );
 router.get("/player/:id", getPlayerById);
 router.post("/players", createPlayer);
 router.post("/players/login", loginPlayer);
-router.post("/player/:id/schedules", authMiddleware, assignSchedule);
-router.delete("/player/:id/schedules", authMiddleware, removeSchedule);
+router.post("/player/:id/schedules", tokenValidationMiddleware, assignSchedule);
+router.delete(
+  "/player/:id/schedules",
+  tokenValidationMiddleware,
+  removeSchedule
+);
 router.put("/player/:id", deletePlayer);
-router.get("/verify-token", authMiddleware, (req, res) => {
+router.get("/verify-token", tokenValidationMiddleware, (req, res) => {
   res.sendStatus(200);
 });
 

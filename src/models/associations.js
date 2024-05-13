@@ -31,21 +31,3 @@ Schedule.belongsToMany(Player, {
   otherKey: "playerId",
   as: "players",
 });
-
-Player.findAll({
-  include: [
-    {
-      model: Schedule,
-      as: "schedules",
-    },
-  ],
-});
-
-Schedule.findAll({
-  include: [
-    {
-      model: Player,
-      as: "players",
-    },
-  ],
-});
