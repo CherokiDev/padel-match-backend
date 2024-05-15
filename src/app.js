@@ -12,7 +12,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "*",
+    origin: "https://padel-match-front-copilot-a2a6b2da36cc.herokuapp.com/",
     credentials: true,
     preflightContinue: true,
   })
