@@ -12,8 +12,15 @@ const app = express();
 
 app.use(
   cors({
-    origin: `${process.env.FRONTEND_HOST}`,
+    origin: function (origin, callback) {
+      if (origin === process.env.FRONTEND_HOST) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
+    preflightContinue: true,
   })
 );
 app.use(express.json());
