@@ -11,7 +11,6 @@ const app = express();
 
 // Custom CORS middleware
 app.use((req, res, next) => {
-  console.log(`variable, ${process.env.FRONTEND_HOST}`);
   res.header("Access-Control-Allow-Origin", `${process.env.FRONTEND_HOST}`);
   res.header("Access-Control-Allow-Credentials", "true");
   res.header(
