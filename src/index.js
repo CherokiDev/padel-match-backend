@@ -42,6 +42,13 @@ async function main() {
       ],
     });
 
+    // Check the value of NODE_ENV
+    if (process.env.NODE_ENV === "production") {
+      console.log("Running in production mode");
+    } else {
+      console.log("Running in development mode");
+    }
+
     app.listen(PORT, () => {
       console.log(`Server is running on http://localhost:${PORT}`);
     });
