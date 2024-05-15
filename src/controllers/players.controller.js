@@ -3,8 +3,85 @@ import bcrypt from "bcrypt";
 import { Player } from "../models/Player.js";
 import { Schedule } from "../models/Schedule.js";
 import { PlayerSchedules } from "../models/PlayerSchedules.js";
+import { Op } from "sequelize";
+import crypto from "crypto";
+import nodemailer from "nodemailer";
 
 const saltRounds = 10;
+
+export const forgotPassword = async (req, res) => {
+  const { email } = req.body;
+  const player = await Player.findOne({ where: { email } });
+
+  if (!player) {
+    return res
+      .status(400)
+      .json({ message: "No existe una cuenta con ese correo electrónico." });
+  }
+
+  const token = crypto.randomBytes(20).toString("hex");
+  player.resetPasswordToken = token;
+  player.resetPasswordExpires = Date.now() + 3600000; // 1 hora
+
+  await player.save();
+
+  const transporter = nodemailer.createTransport({
+    service: "Gmail",
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+  });
+
+  const mailOptions = {
+    to: player.email,
+    from: process.env.EMAIL_USER,
+    subject: "Recuperación de contraseña",
+    text: `Estás recibiendo este correo porque tú (u otra persona) ha solicitado el restablecimiento de la contraseña de tu cuenta.\n\n
+      Por favor, haz clic en el siguiente enlace, o pega esto en tu navegador para completar el proceso:\n\n
+      http://${process.env.FRONTEND_HOST}:${process.env.FRONTEND_PORT}/reset/${token}\n\n
+      Si tú no solicitaste esto, por favor ignora este correo y tu contraseña permanecerá sin cambios.\n`,
+  };
+
+  transporter.sendMail(mailOptions, (err) => {
+    if (err) {
+      console.error("Error sending email:", err);
+      return res
+        .status(500)
+        .json({ message: "Error al enviar el correo electrónico." });
+    }
+
+    res
+      .status(200)
+      .json({ message: "Correo electrónico de recuperación enviado." });
+  });
+};
+
+export const resetPassword = async (req, res) => {
+  const { token } = req.params;
+  const { password } = req.body;
+
+  const player = await Player.findOne({
+    where: {
+      resetPasswordToken: token,
+      resetPasswordExpires: { [Op.gt]: Date.now() },
+    },
+  });
+
+  if (!player) {
+    return res.status(400).json({
+      message: "Token de recuperación de contraseña inválido o expirado.",
+    });
+  }
+
+  player.password = await bcrypt.hash(password, saltRounds);
+  player.resetPasswordToken = null;
+  player.resetPasswordExpires = null;
+
+  await player.save();
+
+  res.status(200).json({ message: "Contraseña restablecida con éxito." });
+};
 
 // @desc    Get all players
 // @route   GET /players
@@ -81,16 +158,23 @@ export const getPlayerById = async (req, res) => {
 // @route   POST /signup
 // @access  Public
 export const createPlayer = async (req, res) => {
-  const { email, name, password, phone, apodo } = req.body;
-  const player = await Player.findOne({
+  const { email, name, password, phone, username } = req.body;
+
+  const existingPlayer = await Player.findOne({
     where: {
-      email,
+      [Op.or]: [{ email }, { username }], // Buscamos por email o username
     },
   });
 
-  if (player) {
+  if (existingPlayer) {
+    let message = "Email no disponible";
+    if (existingPlayer.email === email) {
+      message = "Email no disponible";
+    } else if (existingPlayer.username === username) {
+      message = "Nombre de usuario no disponible";
+    }
     return res.status(400).json({
-      message: "Email no disponible",
+      message,
       data: {},
     });
   } else {
@@ -100,7 +184,7 @@ export const createPlayer = async (req, res) => {
         name,
         password: await bcrypt.hash(password, saltRounds),
         phone,
-        apodo,
+        username,
       });
       if (newPlayer) {
         return res.status(201).json({
@@ -122,13 +206,13 @@ export const createPlayer = async (req, res) => {
 // @route   POST /login
 // @access  Public
 export const loginPlayer = async (req, res) => {
-  const { email, password } = req.body;
+  const { identifier, password } = req.body; // Cambiamos 'email' por 'identifier'
 
   let player;
   try {
     player = await Player.findOne({
       where: {
-        email: email,
+        [Op.or]: [{ email: identifier }, { username: identifier }], // Buscamos por email o username
       },
     });
   } catch (err) {
@@ -137,12 +221,16 @@ export const loginPlayer = async (req, res) => {
   }
 
   if (!player) {
-    return res.status(401).json({ message: "Invalid email or password" });
+    return res
+      .status(401)
+      .json({ message: "Invalid username/email or password" }); // Cambiamos el mensaje de error
   }
 
   const validPassword = await bcrypt.compare(password, player.password);
   if (!validPassword) {
-    return res.status(401).json({ message: "Invalid email or password" });
+    return res
+      .status(401)
+      .json({ message: "Invalid username/email or password" }); // Cambiamos el mensaje de error
   }
 
   const token = jwt.sign({ id: player.id }, process.env.JWT_PRIVATE_KEY, {

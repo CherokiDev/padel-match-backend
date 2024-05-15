@@ -12,11 +12,12 @@ async function main() {
     await sequelize.authenticate();
     console.log("Connection has been established successfully.");
 
-    await Player.sync();
-    await Schedule.sync();
-    await PlayerSchedules.sync();
+    // // Forzar la sincronización de los modelos, esto eliminará y recreará las tablas
+    // await Player.sync({ force: true });
+    // await Schedule.sync({ force: true });
+    // await PlayerSchedules.sync({ force: true });
 
-    // Vaciar las tablas
+    // // Vaciar las tablas
     // if (process.env.NODE_ENV !== "production") {
     //   await Player.truncate({ cascade: true });
     //   await Schedule.truncate({ cascade: true });

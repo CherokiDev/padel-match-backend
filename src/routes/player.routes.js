@@ -10,6 +10,8 @@ import {
   loginPlayer,
   getProfile,
   removeSchedule,
+  forgotPassword,
+  resetPassword,
 } from "../controllers/players.controller.js";
 import { tokenValidationMiddleware } from "../middleware/tokenValidationMiddleware.js";
 import { roleValidationMiddleware } from "../middleware/roleValidationMiddleware.js";
@@ -42,5 +44,7 @@ router.put("/player/:id", deletePlayer);
 router.get("/verify-token", tokenValidationMiddleware, (req, res) => {
   res.sendStatus(200);
 });
+router.post("/players/forgot", forgotPassword);
+router.post("/players/reset/:token", resetPassword);
 
 export default router;
