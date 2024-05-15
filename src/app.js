@@ -13,7 +13,7 @@ const app = express();
 app.use((req, res, next) => {
   res.header(
     "Access-Control-Allow-Origin",
-    "https://padel-match-front-copilot-a2a6b2da36cc.herokuapp.com"
+    `https://padel-match-front-copilot-a2a6b2da36cc.herokuapp.com`
   );
   res.header("Access-Control-Allow-Credentials", "true");
   res.header(
