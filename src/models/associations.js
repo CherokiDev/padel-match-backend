@@ -5,12 +5,12 @@ import { Schedule } from "./Schedule.js";
 Schedule.hasMany(PlayerSchedules, {
   foreignKey: "scheduleId",
   as: "schedulePlayerSchedules",
-  onDelete: "CASCADE", // Agregar esto
+  onDelete: "CASCADE",
 });
 
 PlayerSchedules.belongsTo(Schedule, {
   foreignKey: "scheduleId",
-  onDelete: "CASCADE", // Agregar esto
+  onDelete: "CASCADE",
 });
 
 PlayerSchedules.belongsTo(Player, {
