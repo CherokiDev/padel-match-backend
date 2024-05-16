@@ -39,7 +39,7 @@ export const forgotPassword = async (req, res) => {
     subject: "Recuperación de contraseña",
     text: `Estás recibiendo este correo porque tú (u otra persona) ha solicitado el restablecimiento de la contraseña de tu cuenta.\n\n
       Por favor, haz clic en el siguiente enlace, o pega esto en tu navegador para completar el proceso:\n\n
-      http://${process.env.FRONTEND_HOST}:${process.env.FRONTEND_PORT}/reset/${token}\n\n
+      http://${process.env.FRONTEND_HOST}/reset/${token}\n\n
       Si tú no solicitaste esto, por favor ignora este correo y tu contraseña permanecerá sin cambios.\n`,
   };
 
