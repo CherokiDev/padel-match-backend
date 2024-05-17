@@ -274,9 +274,12 @@ export const loginPlayer = async (req, res) => {
     expiresIn: "1h",
   });
 
+  const isDevelopment = process.env.NODE_ENV === "development";
+
   res.cookie("token", token, {
     httpOnly: true,
-    // secure: true, // Descomenta esta línea si estás en un entorno HTTPS
+    sameSite: isDevelopment ? "lax" : "none", // 'lax' en desarrollo, 'none' en producción
+    secure: !isDevelopment, // false en desarrollo, true en producción
     maxAge: 3600000, // 1 hora en milisegundos
   });
 
