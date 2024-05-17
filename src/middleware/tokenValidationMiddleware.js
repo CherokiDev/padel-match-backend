@@ -4,14 +4,14 @@ import { Player } from "../models/Player.js";
 import { Schedule } from "../models/Schedule.js";
 
 export const tokenValidationMiddleware = async (req, res, next) => {
-  const token = req.cookies.token;
+  const { authorization } = req.headers;
 
-  if (!token) return res.sendStatus(401);
+  if (!authorization) return res.sendStatus(401);
 
   try {
     const encoder = new TextEncoder();
     const { payload } = await jwtVerify(
-      token,
+      authorization,
       encoder.encode(process.env.JWT_PRIVATE_KEY)
     );
 

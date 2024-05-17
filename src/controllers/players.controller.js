@@ -274,16 +274,7 @@ export const loginPlayer = async (req, res) => {
     expiresIn: "1h",
   });
 
-  const isDevelopment = process.env.NODE_ENV === "development";
-
-  res.cookie("token", token, {
-    httpOnly: true,
-    sameSite: isDevelopment ? "lax" : "none", // 'lax' en desarrollo, 'none' en producción
-    secure: !isDevelopment, // false en desarrollo, true en producción
-    maxAge: 3600000, // 1 hora en milisegundos
-  });
-
-  res.json({ id: player.id, email: player.email, role: player.role });
+  res.json({ id: player.id, email: player.email, token, role: player.role });
 };
 
 // @desc    Assign a schedule to a player

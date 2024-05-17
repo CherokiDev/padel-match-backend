@@ -1,7 +1,6 @@
 import "dotenv/config";
 import dotenv from "dotenv";
 import express from "express";
-import cookieParser from "cookie-parser"; // Importa cookie-parser
 import playerRoutes from "./routes/player.routes.js";
 import scheduleRoutes from "./routes/schedule.routes.js";
 import "./models/associations.js";
@@ -30,8 +29,6 @@ app.use((req, res, next) => {
 });
 
 app.use(express.json());
-
-app.use(cookieParser());
 
 app.use(playerRoutes);
 app.use(scheduleRoutes);
