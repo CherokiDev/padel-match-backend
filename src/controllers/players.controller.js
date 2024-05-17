@@ -61,6 +61,16 @@ export const resetPassword = async (req, res) => {
   const { token } = req.params;
   const { password } = req.body;
 
+  // Validación de contraseña (al menos 8 caracteres, al menos una letra mayúscula, una letra minúscula, un número y un carácter especial)
+  const passwordRegex =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  if (!passwordRegex.test(password)) {
+    return res.status(400).json({
+      message:
+        "La contraseña debe tener al menos 8 caracteres, incluyendo al menos una letra mayúscula, una letra minúscula, un número y un carácter especial",
+    });
+  }
+
   const player = await Player.findOne({
     where: {
       resetPasswordToken: token,
@@ -160,9 +170,36 @@ export const getPlayerById = async (req, res) => {
 export const createPlayer = async (req, res) => {
   const { email, name, password, phone, username } = req.body;
 
+  const emailRegex = /^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$/;
+  if (!emailRegex.test(email)) {
+    return res.status(400).json({
+      message: "Email no válido",
+      data: {},
+    });
+  }
+
+  // Validación de contraseña (al menos 8 caracteres, al menos una letra mayúscula, una letra minúscula, un número y un carácter especial)
+  const passwordRegex =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  if (!passwordRegex.test(password)) {
+    return res.status(400).json({
+      message:
+        "La contraseña debe tener al menos 8 caracteres, incluyendo al menos una letra mayúscula, una letra minúscula, un número y un carácter especial",
+      data: {},
+    });
+  }
+
+  const phoneRegex = /^[0-9]{9}$/;
+  if (!phoneRegex.test(phone)) {
+    return res.status(400).json({
+      message: "Número de teléfono no válido, debe de tener 9 dígitos",
+      data: {},
+    });
+  }
+
   const existingPlayer = await Player.findOne({
     where: {
-      [Op.or]: [{ email }, { username }], // Buscamos por email o username
+      [Op.or]: [{ email }, { username }],
     },
   });
 
@@ -206,38 +243,44 @@ export const createPlayer = async (req, res) => {
 // @route   POST /login
 // @access  Public
 export const loginPlayer = async (req, res) => {
-  const { identifier, password } = req.body; // Cambiamos 'email' por 'identifier'
+  const { identifier, password } = req.body;
 
   let player;
   try {
     player = await Player.findOne({
       where: {
-        [Op.or]: [{ email: identifier }, { username: identifier }], // Buscamos por email o username
+        [Op.or]: [{ email: identifier }, { username: identifier }],
       },
     });
   } catch (err) {
     console.error("Error querying the database:", err);
-    return res.sendStatus(500); // Internal Server Error
+    return res.sendStatus(500);
   }
 
   if (!player) {
     return res
       .status(401)
-      .json({ message: "Invalid username/email or password" }); // Cambiamos el mensaje de error
+      .json({ message: "Invalid username/email or password" });
   }
 
   const validPassword = await bcrypt.compare(password, player.password);
   if (!validPassword) {
     return res
       .status(401)
-      .json({ message: "Invalid username/email or password" }); // Cambiamos el mensaje de error
+      .json({ message: "Invalid username/email or password" });
   }
 
   const token = jwt.sign({ id: player.id }, process.env.JWT_PRIVATE_KEY, {
     expiresIn: "1h",
   });
 
-  res.json({ id: player.id, email: player.email, token, role: player.role });
+  res.cookie("token", token, {
+    httpOnly: true,
+    // secure: true, // Descomenta esta línea si estás en un entorno HTTPS
+    maxAge: 3600000, // 1 hora en milisegundos
+  });
+
+  res.json({ id: player.id, email: player.email, role: player.role });
 };
 
 // @desc    Assign a schedule to a player

@@ -1,18 +1,17 @@
-// authMiddleware.js
 import { jwtVerify } from "jose";
 import { TextEncoder } from "util";
 import { Player } from "../models/Player.js";
 import { Schedule } from "../models/Schedule.js";
 
 export const tokenValidationMiddleware = async (req, res, next) => {
-  const { authorization } = req.headers;
+  const token = req.cookies.token;
 
-  if (!authorization) return res.sendStatus(401);
+  if (!token) return res.sendStatus(401);
 
   try {
     const encoder = new TextEncoder();
     const { payload } = await jwtVerify(
-      authorization,
+      token,
       encoder.encode(process.env.JWT_PRIVATE_KEY)
     );
 
