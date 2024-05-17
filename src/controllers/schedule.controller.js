@@ -3,16 +3,7 @@ import cron from "node-cron";
 import moment from "moment/moment.js";
 import { Schedule } from "../models/Schedule.js";
 
-const hours = [
-  "10:00",
-  "11:30",
-  "13:00",
-  "14:30",
-  "16:00",
-  "17:30",
-  "19:00",
-  "20:30",
-];
+const hours = ["09:00", "10:30", "12:00", "15:15", "16:45", "18:15", "19:45"];
 
 export const getSchedules = async (req, res) => {
   try {
