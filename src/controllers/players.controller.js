@@ -178,13 +178,12 @@ export const createPlayer = async (req, res) => {
     });
   }
 
-  // Validación de contraseña (al menos 8 caracteres, al menos una letra mayúscula, una letra minúscula, un número y un carácter especial)
-  const passwordRegex =
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  // Validación de contraseña (al menos 8 caracteres, letras y números)
+  const passwordRegex = /^[A-Za-z0-9]{8,}$/;
   if (!passwordRegex.test(password)) {
     return res.status(400).json({
       message:
-        "La contraseña debe tener al menos 8 caracteres, incluyendo al menos una letra mayúscula, una letra minúscula, un número y un carácter especial",
+        "La contraseña debe tener al menos 8 caracteres, incluyendo letras y números",
       data: {},
     });
   }
