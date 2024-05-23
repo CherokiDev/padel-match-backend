@@ -9,6 +9,50 @@ import nodemailer from "nodemailer";
 
 const saltRounds = 10;
 
+export const sendRegistrationDetailsEmail = async (req, res) => {
+  const { email } = req.body;
+  const user = await Player.findOne({ where: { email } });
+
+  if (!user) {
+    return res
+      .status(400)
+      .json({ message: "No existe una cuenta con ese correo electrónico." });
+  }
+
+  const transporter = nodemailer.createTransport({
+    service: "Gmail",
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+  });
+
+  const mailOptions = {
+    to: user.email,
+    from: process.env.EMAIL_USER,
+    subject: "Detalles de tu cuenta",
+    text: `Hola ${user.name},\n\n
+      Te has registrado con éxito en nuestra plataforma. Aquí están los detalles de tu cuenta:\n\n
+      Nombre: ${user.name}\n
+      Correo electrónico: ${user.email}\n
+      Nombre de usuario: ${user.username}\n\n
+      Si tú no solicitaste esto, por favor ignora este correo.\n`,
+  };
+
+  transporter.sendMail(mailOptions, (err) => {
+    if (err) {
+      console.error("Error sending email:", err);
+      return res
+        .status(500)
+        .json({ message: "Error al enviar el correo electrónico." });
+    }
+
+    res
+      .status(200)
+      .json({ message: "Correo electrónico de detalles de cuenta enviado." });
+  });
+};
+
 export const forgotPassword = async (req, res) => {
   const { email } = req.body;
   const player = await Player.findOne({ where: { email } });

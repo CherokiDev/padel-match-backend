@@ -12,6 +12,7 @@ import {
   removeSchedule,
   forgotPassword,
   resetPassword,
+  sendRegistrationDetailsEmail,
 } from "../controllers/players.controller.js";
 import { tokenValidationMiddleware } from "../middleware/tokenValidationMiddleware.js";
 import { roleValidationMiddleware } from "../middleware/roleValidationMiddleware.js";
@@ -46,5 +47,6 @@ router.get("/verify-token", tokenValidationMiddleware, (req, res) => {
 });
 router.post("/players/forgot", forgotPassword);
 router.post("/players/reset/:token", resetPassword);
+router.post("/send-registration-details-email", sendRegistrationDetailsEmail);
 
 export default router;
