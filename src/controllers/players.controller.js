@@ -62,7 +62,7 @@ export const resetPassword = async (req, res) => {
   const { password } = req.body;
 
   // Validación de contraseña (al menos 8 caracteres, letras y números)
-  const passwordRegex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z])[A-Za-z0-9@#]{8,}$/;
+  const passwordRegex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{8,}$/;
   if (!passwordRegex.test(password)) {
     return res.status(400).json({
       message:
@@ -179,7 +179,7 @@ export const createPlayer = async (req, res) => {
   }
 
   // Validación de contraseña (al menos 8 caracteres, letras y números)
-  const passwordRegex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z])[A-Za-z0-9@#]{8,}$/;
+  const passwordRegex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{8,}$/;
   if (!passwordRegex.test(password)) {
     return res.status(400).json({
       message:
