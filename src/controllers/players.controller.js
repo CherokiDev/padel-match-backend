@@ -14,9 +14,9 @@ export const sendRegistrationDetailsEmail = async (req, res) => {
   const user = await Player.findOne({ where: { email } });
 
   if (!user) {
-    return res
-      .status(400)
-      .json({ message: "No existe una cuenta con ese correo electrónico." });
+    return res.status(400).json({
+      message: "Error al enviar el correo electrónico de recuperación.",
+    });
   }
 
   const transporter = nodemailer.createTransport({
@@ -60,7 +60,9 @@ export const forgotPassword = async (req, res) => {
   if (!player) {
     return res
       .status(400)
-      .json({ message: "No existe una cuenta con ese correo electrónico." });
+      .json({
+        message: "Error al enviar el correo electrónico de recuperación.",
+      });
   }
 
   const token = crypto.randomBytes(20).toString("hex");
@@ -303,14 +305,14 @@ export const loginPlayer = async (req, res) => {
   if (!player) {
     return res
       .status(401)
-      .json({ message: "Invalid username/email or password" });
+      .json({ message: "Nombre de usuario/email o contraseña incorrectos" });
   }
 
   const validPassword = await bcrypt.compare(password, player.password);
   if (!validPassword) {
     return res
       .status(401)
-      .json({ message: "Invalid username/email or password" });
+      .json({ message: "Nombre de usuario/email o contraseña incorrectos" });
   }
 
   const token = jwt.sign({ id: player.id }, process.env.JWT_PRIVATE_KEY, {
