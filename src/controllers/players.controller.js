@@ -58,11 +58,9 @@ export const forgotPassword = async (req, res) => {
   const player = await Player.findOne({ where: { email } });
 
   if (!player) {
-    return res
-      .status(400)
-      .json({
-        message: "Error al enviar el correo electrónico de recuperación.",
-      });
+    return res.status(400).json({
+      message: "Error al enviar el correo electrónico de recuperación.",
+    });
   }
 
   const token = crypto.randomBytes(20).toString("hex");
@@ -373,7 +371,7 @@ export const assignSchedule = async (req, res) => {
 
     if (playerSchedule) {
       return res.status(400).json({
-        message: "Player already has this schedule",
+        message: "Ya tienes este horario asignado",
       });
     }
 
@@ -394,7 +392,7 @@ export const assignSchedule = async (req, res) => {
       });
 
       return res.status(201).json({
-        message: "Schedule assigned to player",
+        message: "Horario asignado correctamente",
         data: updatedPlayer,
       });
     }
@@ -460,7 +458,7 @@ export const removeSchedule = async (req, res) => {
     await player.removeSchedule(schedule);
 
     return res.status(200).json({
-      message: "Schedule removed from player",
+      message: "Horario eliminado correctamente",
     });
   } catch (error) {
     console.log(error);
