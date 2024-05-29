@@ -29,11 +29,11 @@ export const createSchedule = async (req, res) => {
     for (let i = 0; i < 7; i++) {
       for (let j = 0; j < hours.length; j++) {
         const schedule = await Schedule.create({
-          dateOfReservation: `${arrayWeek[i]} ${hours[j]}`,
+          dateOfReservation: moment.utc(`${arrayWeek[i]} ${hours[j]}`).toDate(),
           courtNumber: 1,
         });
         const schedule2 = await Schedule.create({
-          dateOfReservation: `${arrayWeek[i]} ${hours[j]}`,
+          dateOfReservation: moment.utc(`${arrayWeek[i]} ${hours[j]}`).toDate(),
           courtNumber: 2,
         });
       }
@@ -61,11 +61,11 @@ export const updateSchedules = async () => {
     let day = moment().add(6, "days").format("YYYY-MM-DD");
     for (let j = 0; j < hours.length; j++) {
       await Schedule.create({
-        dateOfReservation: `${day} ${hours[j]}`,
+        dateOfReservation: moment.utc(`${day} ${hours[j]}`).toDate(),
         courtNumber: 1,
       });
       await Schedule.create({
-        dateOfReservation: `${day} ${hours[j]}`,
+        dateOfReservation: moment.utc(`${day} ${hours[j]}`).toDate(),
         courtNumber: 2,
       });
     }
