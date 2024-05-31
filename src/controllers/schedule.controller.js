@@ -58,7 +58,7 @@ export const updateSchedules = async () => {
       },
     });
 
-    let day = moment().add(6, "days").format("YYYY-MM-DD");
+    let day = moment().add(7, "days").format("YYYY-MM-DD");
     for (let j = 0; j < hours.length; j++) {
       await Schedule.create({
         dateOfReservation: moment.utc(`${day} ${hours[j]}`).toDate(),
@@ -74,7 +74,10 @@ export const updateSchedules = async () => {
   }
 };
 
-cron.schedule("0 0 * * *", updateSchedules);
+cron.schedule("0 0 * * *", updateSchedules, {
+  scheduled: true,
+  timezone: "Europe/Madrid",
+});
 
 export const deleteSchedule = async (req, res) => {
   const { id } = res.body;
