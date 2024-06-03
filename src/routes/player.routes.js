@@ -41,7 +41,7 @@ router.delete(
   tokenValidationMiddleware,
   removeSchedule
 );
-router.put("/player/:id", deletePlayer);
+// router.put("/player/:id", deletePlayer);
 router.get("/verify-token", tokenValidationMiddleware, (req, res) => {
   res.sendStatus(200);
 });
