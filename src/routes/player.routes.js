@@ -26,13 +26,13 @@ router.get(
   getPlayers
 );
 router.get("/players/profile", tokenValidationMiddleware, getProfile);
-router.get("/players/schedules", getPlayersWithSchedules);
+// router.get("/players/schedules", getPlayersWithSchedules);
 router.get(
   "/players/same-schedule/:id",
   tokenValidationMiddleware,
   getPlayersInSameSchedule
 );
-router.get("/player/:id", getPlayerById);
+// router.get("/player/:id", getPlayerById);
 router.post("/players", createPlayer);
 router.post("/players/login", loginPlayer);
 router.post("/player/:id/schedules", tokenValidationMiddleware, assignSchedule);

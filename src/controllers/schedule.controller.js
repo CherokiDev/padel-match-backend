@@ -1,9 +1,11 @@
 import { Sequelize, Op } from "sequelize";
 import cron from "node-cron";
-import moment from "moment/moment.js";
+import moment from "moment-timezone";
 import { Schedule } from "../models/Schedule.js";
 
 const hours = ["09:00", "10:30", "12:00", "15:15", "16:45", "18:15", "19:45"];
+
+moment.tz.setDefault("Europe/Madrid");
 
 export const getSchedules = async (req, res) => {
   try {
@@ -74,7 +76,7 @@ export const updateSchedules = async () => {
   }
 };
 
-cron.schedule("0 0 * * *", updateSchedules, {
+cron.schedule("0 2 * * *", updateSchedules, {
   scheduled: true,
   timezone: "Europe/Madrid",
 });
