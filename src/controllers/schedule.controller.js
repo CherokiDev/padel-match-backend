@@ -3,7 +3,18 @@ import cron from "node-cron";
 import moment from "moment-timezone";
 import { Schedule } from "../models/Schedule.js";
 
-const hours = ["09:00", "10:30", "12:00", "15:15", "16:45", "18:15", "19:45"];
+const hours = [
+  "09:00",
+  "10:30",
+  "12:00",
+  "15:15",
+  "16:45",
+  "18:15",
+  "19:45",
+].map((hour) => {
+  const [hours, minutes] = hour.split(":");
+  return new Date(1970, 0, 1, hours, minutes);
+});
 
 moment.tz.setDefault("Europe/Madrid");
 
@@ -63,11 +74,15 @@ export const updateSchedules = async () => {
     let day = moment().add(7, "days").format("YYYY-MM-DD");
     for (let j = 0; j < hours.length; j++) {
       await Schedule.create({
-        dateOfReservation: moment.utc(`${day} ${hours[j]}`).toDate(),
+        dateOfReservation: moment(day)
+          .set({ hour: hours[j].getHours(), minute: hours[j].getMinutes() })
+          .toDate(),
         courtNumber: 1,
       });
       await Schedule.create({
-        dateOfReservation: moment.utc(`${day} ${hours[j]}`).toDate(),
+        dateOfReservation: moment(day)
+          .set({ hour: hours[j].getHours(), minute: hours[j].getMinutes() })
+          .toDate(),
         courtNumber: 2,
       });
     }
