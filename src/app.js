@@ -12,7 +12,7 @@ const app = express();
 
 // Configuración de CORS
 const corsOptions = {
-  origin: process.env.FRONTEND_HOST, // o puedes usar un array de strings para permitir múltiples dominios
+  origin: process.env.FRONTEND_HOST, // se puede usar un array de strings para permitir múltiples dominios
   methods: "GET,HEAD,OPTIONS,POST,PUT,DELETE",
   allowedHeaders:
     "Origin, X-Requested-With, Content-Type, Accept, Authorization",

@@ -185,7 +185,7 @@ export const getPlayersWithSchedules = async (req, res) => {
 };
 
 // @desc    Get player by Id
-// @route   GET /player/:id
+// @route   GET /players/:id
 // @access  Public
 export const getPlayerById = async (req, res) => {
   console.log(req);
@@ -321,7 +321,7 @@ export const loginPlayer = async (req, res) => {
 };
 
 // @desc    Assign a schedule to a player
-// @route   POST /player/:id/schedules
+// @route   POST /players/:id/schedules
 // @access  Private
 export const assignSchedule = async (req, res) => {
   const { id } = req.params;
@@ -407,7 +407,7 @@ export const assignSchedule = async (req, res) => {
 };
 
 // @desc    Remove a schedule from a player
-// @route   DELETE /player/:id/schedules
+// @route   DELETE /players/:id/schedules
 // @access  Private
 export const removeSchedule = async (req, res) => {
   const { id } = req.params;
@@ -466,7 +466,7 @@ export const removeSchedule = async (req, res) => {
 };
 
 // @desc    Delete a player
-// @route   PUT /player/:id
+// @route   PUT /players/:id
 // @access  Public
 export const deletePlayer = async (req, res) => {
   const { id } = req.params;

@@ -1,11 +1,8 @@
 import { Router } from "express";
 import {
   getPlayers,
-  getPlayersWithSchedules,
-  getPlayerById,
   createPlayer,
   assignSchedule,
-  deletePlayer,
   getPlayersInSameSchedule,
   loginPlayer,
   getProfile,
@@ -19,34 +16,48 @@ import { roleValidationMiddleware } from "../middleware/roleValidationMiddleware
 
 const router = Router();
 
-router.get(
-  "/players",
-  tokenValidationMiddleware,
-  roleValidationMiddleware(["admin"]),
-  getPlayers
-);
-router.get("/players/profile", tokenValidationMiddleware, getProfile);
-// router.get("/players/schedules", getPlayersWithSchedules);
+// Players
+router
+  .route("/players")
+  .get(
+    tokenValidationMiddleware,
+    roleValidationMiddleware(["admin"]),
+    getPlayers
+  )
+  .post(createPlayer);
+
+router
+  .post("/players/login", loginPlayer)
+  .get("/players/profile", tokenValidationMiddleware, getProfile);
+
+// Player schedules
+router
+  .route("/players/:id/schedules")
+  .post(tokenValidationMiddleware, assignSchedule)
+  .delete(tokenValidationMiddleware, removeSchedule);
+
 router.get(
   "/players/same-schedule/:id",
   tokenValidationMiddleware,
   getPlayersInSameSchedule
 );
-// router.get("/player/:id", getPlayerById);
-router.post("/players", createPlayer);
-router.post("/players/login", loginPlayer);
-router.post("/player/:id/schedules", tokenValidationMiddleware, assignSchedule);
-router.delete(
-  "/player/:id/schedules",
-  tokenValidationMiddleware,
-  removeSchedule
-);
-// router.put("/player/:id", deletePlayer);
+
+// Password management
+router.post("/players/forgot", forgotPassword);
+router.post("/players/reset/:token", resetPassword);
+
+// Registration
+router.post("/send-registration-details-email", sendRegistrationDetailsEmail);
+
+// Token verification
 router.get("/verify-token", tokenValidationMiddleware, (req, res) => {
   res.sendStatus(200);
 });
-router.post("/players/forgot", forgotPassword);
-router.post("/players/reset/:token", resetPassword);
-router.post("/send-registration-details-email", sendRegistrationDetailsEmail);
+
+// router.get("/players/schedules", getPlayersWithSchedules);
+
+// router.get("/players/:id", getPlayerById);
+
+// router.put("/players/:id", deletePlayer);
 
 export default router;
