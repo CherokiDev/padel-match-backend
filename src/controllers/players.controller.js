@@ -188,7 +188,6 @@ export const getPlayersWithSchedules = async (req, res) => {
 // @route   GET /players/:id
 // @access  Public
 export const getPlayerById = async (req, res) => {
-  console.log(req);
   const { id } = req.params;
   try {
     const player = await Player.findOne({

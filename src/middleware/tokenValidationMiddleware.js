@@ -23,10 +23,6 @@ export const tokenValidationMiddleware = async (req, res, next) => {
         where: {
           id: id,
         },
-        include: {
-          model: Schedule,
-          as: "schedules",
-        },
       });
     } catch (err) {
       console.error("Error querying the database:", err);
