@@ -313,7 +313,7 @@ export const loginPlayer = async (req, res) => {
   }
 
   const token = jwt.sign({ id: player.id }, process.env.JWT_PRIVATE_KEY, {
-    expiresIn: "1h",
+    expiresIn: "7d",
   });
 
   res.json({ id: player.id, email: player.email, token, role: player.role });
