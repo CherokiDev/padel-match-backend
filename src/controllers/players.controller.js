@@ -351,7 +351,7 @@ export const assignSchedule = async (req, res) => {
 
     if (payerSchedule && payer) {
       return res.status(400).json({
-        message: "There is already a payer for this schedule",
+        message: "Este horario ya está reservado por otro jugador",
       });
     }
 
