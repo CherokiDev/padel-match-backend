@@ -11,8 +11,19 @@ dotenv.config();
 const app = express();
 
 // Configuración de CORS
+const allowedOrigins = [
+  process.env.FRONTEND_HOST,
+  process.env.FRONTEND_HOST_WWW,
+];
+
 const corsOptions = {
-  origin: process.env.FRONTEND_HOST, // se puede usar un array de strings para permitir múltiples dominios
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   methods: "GET,HEAD,OPTIONS,POST,PUT,DELETE",
   allowedHeaders:
     "Origin, X-Requested-With, Content-Type, Accept, Authorization",
