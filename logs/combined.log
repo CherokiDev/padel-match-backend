@@ -1,0 +1,4 @@
+2024-10-09T15:22:26.000Z [error]: Unable to connect to the database: connect ETIMEDOUT 82.165.2.37:5432
+2024-10-09T15:54:45.340Z [info]: Connection has been established successfully.
+2024-10-09T15:54:45.343Z [info]: Running in development mode
+2024-10-09T15:54:45.346Z [info]: Server is running on port 3000
