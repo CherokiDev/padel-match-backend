@@ -9,6 +9,14 @@ import nodemailer from "nodemailer";
 
 const saltRounds = 10;
 
+const transporter = nodemailer.createTransport({
+  service: "Gmail",
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
+
 export const sendRegistrationDetailsEmail = async (req, res) => {
   const { email } = req.body;
   const user = await Player.findOne({ where: { email } });
@@ -18,14 +26,6 @@ export const sendRegistrationDetailsEmail = async (req, res) => {
       message: "Error al enviar el correo electrónico de recuperación.",
     });
   }
-
-  const transporter = nodemailer.createTransport({
-    service: "Gmail",
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-  });
 
   const mailOptions = {
     to: user.email,
@@ -266,6 +266,20 @@ export const createPlayer = async (req, res) => {
         username,
       });
       if (newPlayer) {
+        const mailOptions = {
+          from: process.env.EMAIL_USER,
+          to: process.env.EMAIL_USER,
+          subject: "Nuevo jugador creado",
+          text: `Se ha creado un nuevo jugador:\n\n Nombre: ${name}\n Email: ${email}\n Teléfono: ${phone}\n`,
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+            console.log(error);
+          } else {
+            console.log("Correo enviado: " + info.response);
+          }
+        });
         return res.status(201).json({
           message: "Jugador creado correctamente",
           data: newPlayer,
