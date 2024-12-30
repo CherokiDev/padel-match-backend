@@ -17,11 +17,11 @@ cd padel-match-backend
 npm install
 ```
 
-## Uso
+## Ejecución en modo desarrollo
 
 ```bash
 # Iniciar el servidor
-npm start
+doppler run -- npm run dev
 ```
 
 ## API
