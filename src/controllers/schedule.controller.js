@@ -30,27 +30,32 @@ export const getSchedules = async (req, res) => {
 };
 
 export const createSchedule = async (req, res) => {
-  let today = moment().format("YYYY-MM-DD");
-
-  const arrayWeek = [];
-  for (let i = 0; i < 7; i++) {
-    arrayWeek.push(today);
-    today = moment(today).add(1, "days").format("YYYY-MM-DD");
-  }
-
   try {
+    const count = await Schedule.count();
+    if (count > 0) {
+      return res.status(400).json({ message: "Schedules already exist" });
+    }
+
+    let today = moment().format("YYYY-MM-DD");
+
+    const arrayWeek = [];
+    for (let i = 0; i < 7; i++) {
+      arrayWeek.push(today);
+      today = moment(today).add(1, "days").format("YYYY-MM-DD");
+    }
+
     for (let i = 0; i < 7; i++) {
       for (let j = 0; j < hours.length; j++) {
-        const schedule = await Schedule.create({
-          dateOfReservation: moment.utc(`${arrayWeek[i]} ${hours[j]}`).toDate(),
+        const dateOfReservation = moment(`${arrayWeek[i]} ${hours[j].toTimeString().slice(0, 5)}`, "YYYY-MM-DD HH:mm").toDate();
+        await Schedule.create({
+          dateOfReservation,
           courtNumber: 1,
         });
-        const schedule2 = await Schedule.create({
-          dateOfReservation: moment.utc(`${arrayWeek[i]} ${hours[j]}`).toDate(),
+        await Schedule.create({
+          dateOfReservation,
           courtNumber: 2,
         });
       }
-      today = moment(today).add(1, "days").format("YYYY-MM-DD");
     }
     res.json({
       message: "Schedule created successfully",

@@ -4,6 +4,7 @@ import { Player } from "./models/Player.js";
 import { PlayerSchedules } from "./models/PlayerSchedules.js";
 import { Schedule } from "./models/Schedule.js";
 import logger from "./utils/logger.js";
+import { createSchedule } from "./controllers/schedule.controller.js"; // Importa createSchedule
 
 const PORT = process.env.PORT || 3000;
 
@@ -29,6 +30,12 @@ async function main() {
     } else {
       logger.info("Running in development mode");
     }
+
+    // // Llama a createSchedule si no hay registros en la tabla Schedule
+    // const count = await Schedule.count();
+    // if (count === 0) {
+    //   await createSchedule({ body: {} }, { json: () => {}, status: () => ({ json: () => {} }) });
+    // }
 
     app.listen(PORT, () => {
       logger.info(`Server is running on port ${PORT}`);
