@@ -4,7 +4,7 @@ import { Player } from "./models/Player.js";
 import { PlayerSchedules } from "./models/PlayerSchedules.js";
 import { Schedule } from "./models/Schedule.js";
 import logger from "./utils/logger.js";
-import { createSchedule } from "./controllers/schedule.controller.js"; // Importa createSchedule
+import { createSchedule } from "./controllers/schedule.controller.js";
 
 const PORT = process.env.PORT || 3000;
 
