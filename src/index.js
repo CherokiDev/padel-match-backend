@@ -1,5 +1,8 @@
 import app from "./app.js";
 import { sequelize } from "./config/db.js";
+import { Player } from "./models/Player.js";
+import { PlayerSchedules } from "./models/PlayerSchedules.js";
+import { Schedule } from "./models/Schedule.js";
 import logger from "./utils/logger.js";
 
 const PORT = process.env.PORT || 3000;

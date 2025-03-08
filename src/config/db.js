@@ -7,6 +7,7 @@ export const sequelize = new Sequelize(
   {
     host: process.env.POSTGRES_HOST,
     dialect: "postgres",
+    schema: process.env.POSTGRES_SCHEMA,
     port: process.env.POSTGRES_PORT,
     logging: (msg) => {
       if (msg.includes("Error")) {

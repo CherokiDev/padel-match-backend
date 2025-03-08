@@ -14,6 +14,7 @@ export const PlayerSchedules = sequelize.define(
     },
   },
   {
+    schema: process.env.POSTGRES_SCHEMA,
     tableName: "playerSchedules",
     timestamps: true,
   }

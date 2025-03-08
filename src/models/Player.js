@@ -45,6 +45,7 @@ export const Player = sequelize.define(
     },
   },
   {
+    schema: process.env.POSTGRES_SCHEMA,
     timestamps: true,
   }
 );
