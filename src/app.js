@@ -34,7 +34,7 @@ app.use(cors(corsOptions));
 
 app.use(express.json());
 
-app.use(playerRoutes);
-app.use(scheduleRoutes);
+app.use("/api", playerRoutes);
+app.use("/api", scheduleRoutes);
 
 export default app;
