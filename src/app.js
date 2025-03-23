@@ -14,6 +14,7 @@ const app = express();
 const allowedOrigins = [
   process.env.FRONTEND_HOST,
   process.env.FRONTEND_HOST_WWW,
+  process.env.FRONTEND_HOST_PROD
 ];
 
 const corsOptions = {
