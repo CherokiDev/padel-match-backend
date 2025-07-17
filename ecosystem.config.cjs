@@ -1,9 +1,11 @@
 module.exports = {
   apps: [
     {
-      name: "padel-match-backend",
+      name: "padelero-backend",
       script: "./src/index.js",
-      env_file: "./.env",
+      env: {
+        NODE_ENV: "production",
+      },
     },
   ],
 };
