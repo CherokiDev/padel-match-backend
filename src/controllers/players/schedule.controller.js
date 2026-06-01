@@ -148,8 +148,8 @@ export const removeSchedule = async (req, res) => {
   }
 };
 
-// @desc    Get players in the same schedule
-// @route   GET /playersinsameschedule/:id
+// @desc    Get players in the same schedule (returns all players sharing any schedule with the user, including payer)
+// @route   GET /players/same-schedule/:id
 // @access  Private
 export const getPlayersInSameSchedule = async (req, res) => {
   try {
@@ -162,35 +162,39 @@ export const getPlayersInSameSchedule = async (req, res) => {
       });
     }
 
-    const payerSchedules = await PlayerSchedules.findAll({
-      where: { playerId: playerId, payer: true },
+    // Encuentra todos los schedules del usuario
+    const myPlayerSchedules = await PlayerSchedules.findAll({
+      where: { playerId },
     });
-    const payerScheduleIds = payerSchedules.map((ps) => ps.scheduleId);
-    const playerSchedules = await PlayerSchedules.findAll({
-      where: { scheduleId: payerScheduleIds },
+    const myScheduleIds = myPlayerSchedules.map((ps) => ps.scheduleId);
+
+    // Encuentra todos los PlayerSchedules de esos schedules
+    const allPlayerSchedules = await PlayerSchedules.findAll({
+      where: { scheduleId: myScheduleIds },
     });
-    const playerIds = playerSchedules.map((ps) => ps.playerId);
+    const allPlayerIds = [...new Set(allPlayerSchedules.map((ps) => ps.playerId))];
+
+    // Trae todos los jugadores y sus schedules compartidos
     let players = await Player.findAll({
-      where: { id: playerIds },
+      where: { id: allPlayerIds },
       include: [
         {
           model: Schedule,
           as: "schedules",
-          required: false, // This is important
+          required: false,
+          where: { id: myScheduleIds },
         },
       ],
     });
 
-    // Filter schedules for each player
+    // Incluye al propio usuario en la lista (el frontend puede filtrar si no lo quiere)
     players = players.map((player) => {
+      // Solo los schedules compartidos
       const filteredSchedules = player.schedules.filter((schedule) =>
-        payerScheduleIds.includes(schedule.id)
+        myScheduleIds.includes(schedule.id)
       );
       return { ...player.toJSON(), schedules: filteredSchedules };
     });
-
-    // Exclude the player that matches the playerId parameter
-    players = players.filter((player) => player.id.toString() !== playerId);
 
     res.json({
       message: "Players in the same schedule",

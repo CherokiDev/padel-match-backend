@@ -4,6 +4,7 @@ import express from "express";
 import cors from "cors";
 import playerRoutes from "./routes/player.routes.js";
 import scheduleRoutes from "./routes/schedule.routes.js";
+import messageRoutes from "./routes/messages.routes.js";
 import "./models/associations.js";
 
 dotenv.config();
@@ -14,8 +15,13 @@ const app = express();
 const allowedOrigins = [
   process.env.FRONTEND_HOST,
   process.env.FRONTEND_HOST_WWW,
-  process.env.FRONTEND_HOST_PROD
-];
+  process.env.FRONTEND_HOST_PROD,
+].filter(Boolean);
+
+// In development, allow Vite default origin
+if (process.env.NODE_ENV !== "production") {
+  allowedOrigins.push("http://localhost:5173");
+}
 
 const corsOptions = {
   origin: function (origin, callback) {
@@ -37,5 +43,6 @@ app.use(express.json());
 
 app.use(playerRoutes);
 app.use(scheduleRoutes);
+app.use(messageRoutes);
 
 export default app;

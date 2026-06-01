@@ -8,3 +8,4 @@ dotenv environment variable files
 info.md
 .vscode
 INFO_PRIVADA.md
+logs/

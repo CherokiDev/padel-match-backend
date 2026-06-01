@@ -1,6 +1,7 @@
 import { Player } from "./Player.js";
 import { PlayerSchedules } from "./PlayerSchedules.js";
 import { Schedule } from "./Schedule.js";
+import { Message } from "./Message.js";
 
 Schedule.hasMany(PlayerSchedules, {
   foreignKey: "scheduleId",
@@ -30,4 +31,35 @@ Schedule.belongsToMany(Player, {
   foreignKey: "scheduleId",
   otherKey: "playerId",
   as: "players",
+});
+
+// Message Associations
+Message.belongsTo(  Player, {
+  foreignKey: "senderId",
+  onDelete: "CASCADE",
+  as: "sender",
+});
+
+Message.belongsTo(  Player, {
+  foreignKey: "receiverId",
+  onDelete: "CASCADE",
+  as: "receiver",
+});
+
+Message.belongsTo(  Schedule, {
+  foreignKey: "scheduleId",
+  onDelete: "SET NULL",
+  as: "schedule",
+});
+
+Player.hasMany(Message, {
+  foreignKey: "senderId",
+  as: "sentMessages",
+  onDelete: "CASCADE",
+});
+
+Player.hasMany(Message, {
+  foreignKey: "receiverId",
+  as: "receivedMessages",
+  onDelete: "CASCADE",
 });
