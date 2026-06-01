@@ -14,8 +14,9 @@ API REST + WebSocket para una app de reservas de pádel. Los jugadores se regist
 - **Email**: Nodemailer (Gmail)
 - **Cron**: node-cron (gestión automática de horarios)
 - **Logging**: Winston
-- **Process manager (prod)**: PM2 (`ecosystem.config.cjs`)
-- **Secrets (prod)**: Doppler (`doppler run -- npm run dev`)
+- **Process manager (prod)**: systemd (`/etc/systemd/system/padelero-backend.service`, lanza `node src/index.js` directamente)
+- **Secrets (prod)**: archivo `.env` en la VPS (no Doppler en producción)
+- **Secrets (dev local)**: Doppler o `.env` local
 
 ## Arrancar en desarrollo
 
@@ -141,11 +142,18 @@ src/
 2. **`deletePlayer`** referencia `PlayerSchedules` sin importarlo — `profile.controller.js:98`. Tampoco expuesto.
 3. **Inconsistencia JWT**: firma con `jsonwebtoken`, verifica REST con `jose`, verifica socket con `jsonwebtoken`. Funciona pero es inconsistente.
 
-## Estado de la rama `feature/realtime-chat`
+## Despliegue en producción (VPS)
 
-**Todos los cambios siguen sin commitear** (locales). La feature está completa y funcional en local. Pendiente:
-1. Commitear con mensajes descriptivos
-2. Push y PR hacia `master`
+- **Script de deploy**: `~/proyectos/padelero/update-backend-systemd.sh` — hace `git pull` + `npm install` + `sudo systemctl restart padelero-backend`
+- **Process manager**: systemd (NO PM2 — el proceso `padelero-backend` en `pm2 list` es un residuo de una versión anterior, se puede ignorar)
+- **Ver estado**: `sudo systemctl status padelero-backend`
+- **Ver logs**: `sudo journalctl -u padelero-backend -f`
+
+## Estado actual
+
+La feature `realtime-chat` está **completa, commiteada y desplegada en producción** (2026-06-01).
+- Commits en ramas `develop` y `master` (backend) y `main` (frontend)
+- Verificado y funcionando en producción
 
 ## Reglas de trabajo con Claude
 
