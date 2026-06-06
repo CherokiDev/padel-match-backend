@@ -167,10 +167,8 @@ src/
 ### ~~1. Eliminar conversaciones cuando desaparece la reserva~~
 ~~Resuelto~~ — ya funciona correctamente. El cron borra el `Schedule`, los `Message` quedan con `scheduleId = null` (`onDelete: SET NULL`), y los tres endpoints de mensajes filtran `scheduleId != null`. Las conversaciones desaparecen de la UI automáticamente. Los mensajes huérfanos permanecen en la BD pero son invisibles para el usuario (2026-06-06).
 
-### 2. Bug: botón "atrás" en móvil deja la app sin cargar
-Al pulsar la flecha de atrás del navegador móvil, la app se queda en blanco o sin mostrar información.
-- Problema probablemente en la gestión del historial de navegación (React Router) o en que algún componente no rehidrata su estado al volver a una ruta ya visitada.
-- Afecta principalmente al frontend (`App.jsx`, posiblemente `ChatModal.jsx` o `MatchList.jsx`).
+### ~~2. Bug: pantalla en blanco al recargar la página~~
+~~Resuelto~~ (2026-06-06) — El `profileSlice` inicializa `data: {}` (objeto vacío, no `null`). Un objeto vacío es truthy, así que el guard `!profileData` no lo detectaba y los componentes intentaban acceder a `profileData.schedules` antes de que el fetch completara, lanzando un TypeError. Corregido comprobando `!profileData?.id` en `MatchList`, `Home` y `Profile`, y añadido `?.` en `profileData.schedules?.find`.
 
 ## Reglas de trabajo con Claude
 
