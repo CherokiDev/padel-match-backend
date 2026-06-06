@@ -73,6 +73,7 @@ src/
 - **PlayerSchedules** (pivot): `payer: boolean`. Solo 1 payer por schedule.
 - **Chat privacy**: el payer inicia siempre. El no-payer no puede ver ni escribir al payer hasta recibir el primer mensaje de este.
 - **getPlayersInSameSchedule**: devuelve TODOS los compañeros incluyendo al propio usuario — el frontend filtra con `player.id !== profileData.id`.
+- **Vista de no-payer**: en el frontend, la pantalla de horarios (`Schedules.jsx`) agrupa las dos pistas de un mismo horario en un único slot. Al registrarse, el no-payer queda apuntado en ambas pistas (dos registros en `PlayerSchedules`). En `MatchList.jsx` las dos entradas se agrupan también en una sola tarjeta por franja.
 
 ## Endpoints REST completos
 
@@ -151,9 +152,25 @@ src/
 
 ## Estado actual
 
-La feature `realtime-chat` está **completa, commiteada y desplegada en producción** (2026-06-01).
+**2026-06-06** — Cambios en frontend (rama `develop`):
+- **WhatsApp oculto**: el botón "Enviar whatsapp" en `MatchList.jsx` está desactivado con `{false && ...}`. El código se conserva para reactivarlo cuando se quiera.
+- **Vista de pistas unificada para no-payer**: `Schedules.jsx` agrupa los dos courts del mismo horario en un único evento del calendario (ancho completo, sin título). Al confirmar, registra al jugador en ambas pistas con dos llamadas al backend. `MatchList.jsx` también agrupa las entradas "Apuntado para jugar" por franja horaria: una tarjeta por hora y el botón Eliminar cancela ambas pistas.
+- **Bug corregido (payer / pista ya ocupada)**: `Schedules.jsx` ahora llama a `GET /schedulesAvailables` al cargar para marcar en rojo las pistas con payer. El error 400 del backend ya llega al usuario en lugar de ignorarse. La lista de disponibles se refresca tras cada intento de reserva.
+- CSS: `Schedules.css` diferencia `.payer-view` (eventos al 49%) de `.non-payer-view` (99% de ancho).
+
+**2026-06-01** — La feature `realtime-chat` está **completa, commiteada y desplegada en producción**.
 - Commits en ramas `develop` y `master` (backend) y `main` (frontend)
 - Verificado y funcionando en producción
+
+## Próximos pasos
+
+### ~~1. Eliminar conversaciones cuando desaparece la reserva~~
+~~Resuelto~~ — ya funciona correctamente. El cron borra el `Schedule`, los `Message` quedan con `scheduleId = null` (`onDelete: SET NULL`), y los tres endpoints de mensajes filtran `scheduleId != null`. Las conversaciones desaparecen de la UI automáticamente. Los mensajes huérfanos permanecen en la BD pero son invisibles para el usuario (2026-06-06).
+
+### 2. Bug: botón "atrás" en móvil deja la app sin cargar
+Al pulsar la flecha de atrás del navegador móvil, la app se queda en blanco o sin mostrar información.
+- Problema probablemente en la gestión del historial de navegación (React Router) o en que algún componente no rehidrata su estado al volver a una ruta ya visitada.
+- Afecta principalmente al frontend (`App.jsx`, posiblemente `ChatModal.jsx` o `MatchList.jsx`).
 
 ## Reglas de trabajo con Claude
 
